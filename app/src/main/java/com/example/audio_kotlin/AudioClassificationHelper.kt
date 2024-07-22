@@ -2,11 +2,14 @@ package com.example.audio_kotlin
 
 import android.content.Context
 import android.media.AudioRecord
+import android.os.SystemClock
+import android.util.Log
 import com.example.audio_kotlin.fragments.AudioClassificationListener
 import org.tensorflow.lite.support.audio.TensorAudio
 import org.tensorflow.lite.task.audio.classifier.AudioClassifier
 import org.tensorflow.lite.task.core.BaseOptions
 import java.util.concurrent.ScheduledThreadPoolExecutor
+import java.util.concurrent.TimeUnit
 
 class AudioClassificationHelper(
     val context: Context,
@@ -26,6 +29,7 @@ class AudioClassificationHelper(
 
     private val classifyRunnable = Runnable {
         // calling the classifyAudio() method to classify the audio
+        classifyAudio()
     }
 
     init {
@@ -46,7 +50,65 @@ class AudioClassificationHelper(
                 baseOptionsBuilder.useNnapi()
             }
         }
+
+        val options = AudioClassifier.AudioClassifierOptions.builder()
+            .setScoreThreshold(classificationThreshhold)
+            .setMaxResults(numOfResults)
+            .setBaseOptions(baseOptionsBuilder.build())
+            .build()
+
+        try {
+            // creating the classifier and required supporting objects
+            classifier = AudioClassifier.createFromFileAndOptions(context, currentModel, options)
+            tensorAudio = classifier.createInputTensorAudio()
+            recorder = classifier.createAudioRecord()
+            // pending................
+        } catch (e: IllegalStateException){
+            listener.onError(
+                "AudioClassifier failed to initialize. See error logs for details"
+            )
+            Log.e("AudionClassification," ,"Tflite failed to load with error: " + e.message)
+        }
     }
+
+    fun startAudioClassification() {
+        if (recorder.recordingState == AudioRecord.RECORDSTATE_RECORDING) {
+            return
+        }
+        recorder.startRecording()
+        executor = ScheduledThreadPoolExecutor(1)
+
+        // Each model will expect a specific audio recording length. This formula calculates that
+        // length using the input buffer size and tensor format sample rate.
+        // For example, YAMNET expects 0.975 second length recordings.
+        // This needs to be in milliseconds to avoid the required Long value dropping decimals.
+
+        val lengthInMs = ((classifier.requiredInputBufferSize * 1.0f) /
+                classifier.requiredTensorAudioFormat.sampleRate) * 1000
+
+        val interval = (lengthInMs * (1 - overlap)).toLong()
+
+        executor.scheduleWithFixedDelay(
+            classifyRunnable,
+            0,
+            interval,
+            TimeUnit.MILLISECONDS
+        )
+    }
+
+    private fun classifyAudio() {
+        tensorAudio.load(recorder)
+        var inferenceTime = SystemClock.uptimeMillis()
+        val output = classifier.classify(tensorAudio)
+        inferenceTime = SystemClock.uptimeMillis() - inferenceTime
+        listener.onResult(output[0].categories, inferenceTime)
+    }
+
+    fun stopAudioClassification() {
+        recorder.stop()
+        executor.shutdown()
+    }
+
 
 
 
