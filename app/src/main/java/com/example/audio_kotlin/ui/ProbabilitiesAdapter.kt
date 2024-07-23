@@ -22,9 +22,13 @@ internal class ProbabilitiesAdapter: RecyclerView.Adapter<ProbabilitiesAdapter.V
 
     }
 
-    override fun onBindingViewHolder(holder: ViewHolder, position: Int){
+    override fun onBindViewHolder(holder: ViewHolder, position: Int){
         val category = categoryList[position]
         holder.bind(category.label, category.score, category.index)
+    }
+
+    override fun getItemCount(): Int{
+        return categoryList.size
     }
 
     class ViewHolder(private val binding: ItemProbabilityBinding) :
