@@ -110,16 +110,6 @@ class AudioClassificationHelper(
     }
 
 
-
-
-
-
-
-
-
-
-
-
     companion object {
         const val DELEGATE_CPU = 0
         const val DELEGATE_NNAPI = 1

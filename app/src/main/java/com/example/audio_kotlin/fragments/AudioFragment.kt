@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.RadioGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.navigation.Navigation
 import com.example.audio_kotlin.AudioClassificationHelper
 import com.example.audio_kotlin.R
 import com.example.audio_kotlin.databinding.FragmentAudioBinding
@@ -204,6 +205,20 @@ class AudioFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         // make sure all permissions are present
+        if (!PermissionFragment.hasPermissions(requireContext())){
+            Navigation.findNavController(requireActivity(), R.id.fragment_container)
+                .navigate(AudioFragmentDirections.actionAudioToPermissions())
+        }
+
+        if (::audioHelper.isInitialized){
+            audioHelper.stopAudioClassification()
+        }
+
+    }
+
+    override fun onDestroyView() {
+        _fragmentBinding = null
+        super.onDestroyView()
 
     }
 }
