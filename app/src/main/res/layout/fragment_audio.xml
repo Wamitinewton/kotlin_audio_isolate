@@ -28,6 +28,8 @@
         android:layout_margin="@dimen/margin_default"
         android:scrollbars="vertical"
         app:layoutManager="LinearLayoutManager"
+        app:layout_anchor="@+id/recycler_view"
+        app:layout_anchorGravity="center"
         tools:listitem="@layout/item_probability" />
 
     <include
