@@ -20,6 +20,7 @@ jobs:
       uses: actions/setup-java@v3
       with:
         java-version: '11'
+        distribution: 'temurin' # You can change this to your preferred distribution
 
     - name: Build with Gradle
       run: ./gradlew build
