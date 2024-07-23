@@ -1,43 +1,42 @@
-name: Java CI with Gradle
+name: Check Changes in Compose Application
 
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - main
   pull_request:
-    branches: [ "main" ]
+    branches:
+      - main
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
 
     steps:
-    - uses: actions/checkout@v4
-    - name: Set up JDK 17
-      uses: actions/setup-java@v4
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up JDK 11
+      uses: actions/setup-java@v3
       with:
-        distribution: 'temurin'
-        java-version: '17'
-        cache: 'gradle'
+        java-version: '11'
 
-    - name: Setup Gradle
-      uses: gradle/gradle-build-action@v1
-
-    - name: Build with Gradle Wrapper
+    - name: Build with Gradle
       run: ./gradlew build
 
-  dependency-submission:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
+    - name: Run tests
+      run: ./gradlew test
 
-    steps:
-    - uses: actions/checkout@v4
-    - name: Set up JDK 17
-      uses: actions/setup-java@v4
-      with:
-        distribution: 'temurin'
-        java-version: '17'
+    - name: Detect changes in Compose
+      run: |
+        CHANGED_FILES=$(git diff --name-only HEAD^ HEAD)
+        echo "Changed files: $CHANGED_FILES"
+        if echo "$CHANGED_FILES" | grep -qE '^app/src/main/java/com/example/audio_kotlin/.*'; then
+          echo "Changes detected in Compose application"
+        else
+          echo "No changes detected in Compose application"
+        fi
 
-
+    - name: Notify if changes detected
+      if: ${{ steps.detect_changes.outputs.changes_detected == 'true' }}
+      run: echo "Notify team about changes in Compose application"
