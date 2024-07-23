@@ -15,6 +15,8 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
+      with:
+        fetch-depth: 2  # Ensure we have at least two commits
 
     - name: Set up JDK 17
       uses: actions/setup-java@v3
@@ -33,10 +35,11 @@ jobs:
 
     - name: Detect changes in Compose
       run: |
-        if [ "$(git rev-parse --abbrev-ref HEAD)" = "HEAD" ]; then
-          CHANGED_FILES=$(git diff --name-only HEAD~1)
+        if [ $(git rev-list --count HEAD) -eq 1 ]; then
+          echo "This is the first commit."
+          CHANGED_FILES=$(git diff-tree --no-commit-id --name-only -r HEAD)
         else
-          CHANGED_FILES=$(git diff --name-only HEAD^ HEAD)
+          CHANGED_FILES=$(git diff --name-only HEAD~1 HEAD)
         fi
         echo "Changed files: $CHANGED_FILES"
         if echo "$CHANGED_FILES" | grep -qE '^app/src/main/java/com/example/audio_kotlin/.*'; then
