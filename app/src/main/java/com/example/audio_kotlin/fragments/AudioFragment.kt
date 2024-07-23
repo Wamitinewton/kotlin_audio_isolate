@@ -173,6 +173,37 @@ class AudioFragment : Fragment() {
         // to initialize the classifier on the thread that does the classifying. This requires a
         // different app structure than is used in this sample.
 
+        fragmentAudioBinding.bottomSheetLayout.spinnerDelegate.onItemSelectedListener =
+            object : AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(
+                    parent: AdapterView<*>?,
+                    view: View?,
+                    position: Int,
+                    id: Long
+                ) {
+                    audioHelper.stopAudioClassification()
+                    audioHelper.currentDelegate = position
+                    audioHelper.initClassify()
+                }
+
+                override fun onNothingSelected(parent: AdapterView<*>?) {
+                    // nothing to call here
+                }
+            }
+        fragmentAudioBinding.bottomSheetLayout.spinnerOverlap.setSelection(
+            2,
+            false
+        )
+        fragmentAudioBinding.bottomSheetLayout.spinnerDelegate.setSelection(
+            0,
+            false
+        )
+
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // make sure all permissions are present
 
     }
 }
