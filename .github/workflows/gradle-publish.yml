@@ -33,7 +33,11 @@ jobs:
 
     - name: Detect changes in Compose
       run: |
-        CHANGED_FILES=$(git diff --name-only HEAD^ HEAD)
+        if [ "$(git rev-parse --abbrev-ref HEAD)" = "HEAD" ]; then
+          CHANGED_FILES=$(git diff --name-only HEAD~1)
+        else
+          CHANGED_FILES=$(git diff --name-only HEAD^ HEAD)
+        fi
         echo "Changed files: $CHANGED_FILES"
         if echo "$CHANGED_FILES" | grep -qE '^app/src/main/java/com/example/audio_kotlin/.*'; then
           echo "Changes detected in Compose application"
