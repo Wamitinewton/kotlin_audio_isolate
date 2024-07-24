@@ -1,8 +1,6 @@
 package com.example.audio_kotlin
 
-import android.os.Build
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import com.example.audio_kotlin.databinding.ActivityMainBinding
 
@@ -15,13 +13,12 @@ class MainActivity : AppCompatActivity() {
        setContentView(activityMainBinding.root)
     }
 
-    override fun onBackPressed() {
-        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.Q) {
-            // Workaround for Android Q memory leak issue in IRequestFinishCallback$Stub.
-            // (https://issuetracker.google.com/issues/139738913)
-            finishAfterTransition()
-        } else {
-            super.onBackPressed()
-        }
-    }
+//    override fun onBackPressed() {
+//        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.Q) {
+//
+//            finishAfterTransition()
+//        } else {
+//            super.onBackPressed()
+//        }
+//    }
 }

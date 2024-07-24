@@ -127,22 +127,22 @@ class AudioFragment : Fragment() {
         // a result. Increments in steps of 0.1 or 10%.
 
         fragmentAudioBinding.bottomSheetLayout.thresholdMinus.setOnClickListener {
-            if (audioHelper.classificationThreshhold >= 0.2){
+            if (audioHelper.classificationThreshold >= 0.2){
                 audioHelper.stopAudioClassification()
-                audioHelper.classificationThreshhold -= 0.1f
+                audioHelper.classificationThreshold -= 0.1f
                 audioHelper.initClassify()
                 fragmentAudioBinding.bottomSheetLayout.thresholdValue.text =
-                    String.format("%.2f", audioHelper.classificationThreshhold)
+                    String.format("%.2f", audioHelper.classificationThreshold)
             }
         }
 
         fragmentAudioBinding.bottomSheetLayout.thresholdPlus.setOnClickListener {
-            if (audioHelper.classificationThreshhold <= 0.8) {
+            if (audioHelper.classificationThreshold <= 0.8) {
                 audioHelper.stopAudioClassification()
-                audioHelper.classificationThreshhold += 0.1f
+                audioHelper.classificationThreshold += 0.1f
                 audioHelper.initClassify()
                 fragmentAudioBinding.bottomSheetLayout.threadsValue.text =
-                    String.format("%.2f", audioHelper.classificationThreshhold)
+                    String.format("%.2f", audioHelper.classificationThreshold)
             }
         }
 
@@ -214,6 +214,13 @@ class AudioFragment : Fragment() {
             audioHelper.stopAudioClassification()
         }
 
+    }
+
+    override fun onPause() {
+        super.onPause()
+        if (::audioHelper.isInitialized){
+            audioHelper.stopAudioClassification()
+        }
     }
 
     override fun onDestroyView() {

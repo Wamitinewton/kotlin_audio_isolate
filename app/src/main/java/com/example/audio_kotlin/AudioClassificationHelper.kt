@@ -15,7 +15,7 @@ class AudioClassificationHelper(
     val context: Context,
     val listener: AudioClassificationListener,
     var currentModel: String = YAMNET_MODEL,
-    var classificationThreshhold: Float = DISPLAY_THRESHOLD,
+    var classificationThreshold: Float = DISPLAY_THRESHOLD,
     var overlap: Float = DEFAULT_OVERLAP_VALUE,
     var numOfResults: Int = DEFAULT_NUM_OF_RESULTS,
     var currentDelegate: Int = 0,
@@ -52,7 +52,7 @@ class AudioClassificationHelper(
         }
 
         val options = AudioClassifier.AudioClassifierOptions.builder()
-            .setScoreThreshold(classificationThreshhold)
+            .setScoreThreshold(classificationThreshold)
             .setMaxResults(numOfResults)
             .setBaseOptions(baseOptionsBuilder.build())
             .build()
@@ -63,6 +63,7 @@ class AudioClassificationHelper(
             tensorAudio = classifier.createInputTensorAudio()
             recorder = classifier.createAudioRecord()
             // pending................
+            startAudioClassification()
         } catch (e: IllegalStateException){
             listener.onError(
                 "AudioClassifier failed to initialize. See error logs for details"

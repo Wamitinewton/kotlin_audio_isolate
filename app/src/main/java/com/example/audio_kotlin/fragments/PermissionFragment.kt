@@ -22,6 +22,7 @@ class PermissionFragment: Fragment() {
         ) {isGranted: Boolean ->
             if (isGranted){
                 Toast.makeText(context, "Permission request granted", Toast.LENGTH_SHORT).show()
+                navigateToAudioFragment()
             } else{
                 Toast.makeText(context, "Permission request denied", Toast.LENGTH_SHORT).show()
             }

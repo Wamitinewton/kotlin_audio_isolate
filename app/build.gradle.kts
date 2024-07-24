@@ -40,7 +40,7 @@ android {
         jvmTarget = "17"
     }
     buildFeatures {
-        compose = true
+
         viewBinding = true
     }
     composeOptions {
@@ -66,7 +66,7 @@ dependencies {
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
-    implementation(libs.androidx.material3)
+//    implementation(libs.androidx.material3)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -82,4 +82,5 @@ dependencies {
     implementation("androidx.navigation:navigation-ui-ktx:$nav_version")
     implementation("androidx.localbroadcastmanager:localbroadcastmanager:1.0.0")
     implementation("org.tensorflow:tensorflow-lite-task-audio:0.4.0")
+    implementation("com.google.android.material:material:1.0.0")
 }
